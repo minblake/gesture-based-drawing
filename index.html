@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Canvas</title>
+  </head>
+  <body>
+    <div id="app">
+      <canvas
+        id="canvas"
+        width="300px"
+        height="500px"
+        @mousedown="startDrawing"
+        @mousemove="draw"
+        @mouseup="stopDrawing"
+        @mouseout="stopDrawing"
+      >
+      </canvas>
+      <button type="button" @click="clearCanvas">Clear</button>
+      <!-- <drawing-board w="300px" h="500px"></drawing-board> -->
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
