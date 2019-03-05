@@ -19,8 +19,16 @@
         @mouseout="stopDrawing"
       >
       </canvas>
-      <button type="button" @click="clearCanvas">Clear</button>
-      <!-- <drawing-board w="300px" h="500px"></drawing-board> -->
+      <ul>
+        <li>
+          <button type="button" @click="clearCanvas(0, 0, 300, 500)">
+            Clear
+          </button>
+        </li>
+        <li>
+          <button type="button" @click="drawRectangle">Rectange</button>
+        </li>
+      </ul>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
