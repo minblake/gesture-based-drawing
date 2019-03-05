@@ -4,33 +4,73 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css"
+    />
     <link rel="stylesheet" href="style.css" />
     <title>Canvas</title>
   </head>
   <body>
-    <div id="app">
-      <canvas
-        id="canvas"
-        width="300px"
-        height="500px"
-        @mousedown="startDrawing"
-        @mousemove="draw"
-        @mouseup="stopDrawing"
-        @mouseout="stopDrawing"
-      >
-      </canvas>
-      <ul>
-        <li>
-          <button type="button" @click="clearCanvas(0, 0, 300, 500)">
+    <section class="hero is-light is-fullheight">
+      <div class="hero-body">
+        <!-- <div class="container"> -->
+        <div id="app">
+          <div class="buttons has-addons is-centered">
+            <button
+              class="button"
+              type="button"
+              :class="{ 'is-primary': shapeSelected[0] }"
+              @click="drawRectangle"
+            >
+              Line
+            </button>
+            <button
+              class="button"
+              :class="{ 'is-primary': shapeSelected[1] }"
+              type="button"
+              @click="drawRectangle"
+            >
+              Triangle
+            </button>
+            <button
+              class="button"
+              :class="{ 'is-primary': shapeSelected[2] }"
+              type="button"
+              @click="drawRectangle"
+            >
+              Rectangle
+            </button>
+            <button
+              class="button"
+              :class="{ 'is-primary': shapeSelected[3] }"
+              type="button"
+              @click="drawRectangle"
+            >
+              Circle
+            </button>
+          </div>
+          <canvas
+            id="canvas"
+            width="330px"
+            height="400px"
+            @mousedown="startDrawing"
+            @mousemove="draw"
+            @mouseup="stopDrawing"
+            @mouseout="stopDrawing"
+          >
+          </canvas>
+          <button
+            class="clear button is-danger is-centered"
+            type="button"
+            @click="clearCanvas(0, 0, 330, 400)"
+          >
             Clear
           </button>
-        </li>
-        <li>
-          <button type="button" @click="drawRectangle">Rectange</button>
-        </li>
-      </ul>
-    </div>
-
+        </div>
+        <!-- </div> -->
+      </div>
+    </section>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script type="module" src="app.js"></script>
   </body>
