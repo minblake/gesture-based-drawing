@@ -14,13 +14,12 @@ const vm = new Vue({
     canvas: null,
     canvasDim: { x: 0, y: 0 },
     ctx: null,
-    next: { x: 0, y: 0 },
     curr: { x: 0, y: 0 },
+    prev: { x: 0, y: 0 },
     listX: [],
     listY: [],
-    state: [],
+    shapes: [],
     shapeSelected: [true, false, false, false] // [ line, triangle, rectangle, circle ]
-    // isTouching: false
   },
   mounted() {
     this.canvas = document.getElementById("drawing-board");
@@ -40,31 +39,46 @@ const vm = new Vue({
           })
         : this.stopDrawing();
     },
-    stopDrawing() {
-      console.log("stop");
-      // this.isTouching = false;
-      // this.drawRectangle();
-    },
-    draw(pos) {
-      this.next = { ...pos };
-
-      if (this.listX.length > 1) {
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.curr.x, this.curr.y);
-        this.ctx.lineTo(this.next.x, this.next.y);
-        this.ctx.stroke();
-      }
-      this.curr = { ...this.next };
-
-      this.listX.push(this.next.x);
-      this.listY.push(this.next.y);
-    },
-    clearCanvas() {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    clearList() {
       this.listX = [];
       this.listY = [];
     },
-    drawRectangle() {
+    stopDrawing() {
+      this.createRectangle();
+      this.clearCanvas(true);
+      this.drawShapes();
+    },
+    draw(pos) {
+      this.curr = { ...pos };
+
+      if (this.listX.length > 1) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.prev.x, this.prev.y);
+        this.ctx.lineTo(this.curr.x, this.curr.y);
+        this.ctx.stroke();
+      }
+      this.prev = { ...this.curr };
+
+      this.listX.push(this.curr.x);
+      this.listY.push(this.curr.y);
+    },
+    clearCanvas(isRedrawing) {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.clearList();
+
+      if (!isRedrawing) this.shapes = [];
+    },
+    drawShapes() {
+      for (let i = 0; i < this.shapes.length; i++) {
+        const { type, coord } = this.shapes[i];
+        switch (type) {
+          case "rect":
+            this.ctx.fillRect(...coord);
+            this.ctx.stroke();
+        }
+      }
+    },
+    createRectangle() {
       const maxX = Math.max(...this.listX);
       const minX = Math.min(...this.listX);
       const maxY = Math.max(...this.listY);
@@ -72,10 +86,7 @@ const vm = new Vue({
       const width = maxX - minX;
       const height = maxY - minY;
 
-      console.log(this.listX);
-      this.clearCanvas();
-      this.ctx.fillRect(minX, minY, width, height);
-      this.ctx.stroke();
+      this.shapes.push({ type: "rect", coord: [minX, minY, width, height] });
     }
   }
 });
