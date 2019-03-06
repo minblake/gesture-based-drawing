@@ -7,7 +7,7 @@ new Vue({
     y: { curr: 0, next: 0 },
     listX: [],
     listY: [],
-    shapeSelected: [false, false, false, false], // [ line, triangle, rectangle, circle ]
+    shapeSelected: [true, false, false, false], // [ line, triangle, rectangle, circle ]
     isMouseDown: false
   },
   mounted() {

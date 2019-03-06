@@ -14,14 +14,13 @@
   <body>
     <section class="hero is-light is-fullheight">
       <div class="hero-body">
-        <!-- <div class="container"> -->
         <div id="app">
           <div class="buttons has-addons is-centered">
             <button
               class="button"
               type="button"
               :class="{ 'is-primary': shapeSelected[0] }"
-              @click="drawRectangle"
+              @click="shapeSelected = [true, false, false, false]"
             >
               Line
             </button>
@@ -29,7 +28,7 @@
               class="button"
               :class="{ 'is-primary': shapeSelected[1] }"
               type="button"
-              @click="drawRectangle"
+              @click="shapeSelected = [false, true, false, false]"
             >
               Triangle
             </button>
@@ -37,7 +36,7 @@
               class="button"
               :class="{ 'is-primary': shapeSelected[2] }"
               type="button"
-              @click="drawRectangle"
+              @click="shapeSelected = [false, false, true, false]"
             >
               Rectangle
             </button>
@@ -45,7 +44,7 @@
               class="button"
               :class="{ 'is-primary': shapeSelected[3] }"
               type="button"
-              @click="drawRectangle"
+              @click="shapeSelected = [false, false, false, true]"
             >
               Circle
             </button>
@@ -68,7 +67,6 @@
             Clear
           </button>
         </div>
-        <!-- </div> -->
       </div>
     </section>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
