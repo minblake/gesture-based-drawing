@@ -44,7 +44,22 @@ const vm = new Vue({
       this.listY = [];
     },
     stopDrawing() {
-      this.createRectangle();
+      if (this.shapeSelected[0]) {
+        const curr = { x: 0, y: 0 };
+        const dest = { x: 0, y: 0 };
+
+        curr.x = this.listX.shift();
+        curr.y = this.listY.shift();
+        dest.x = this.listX.pop();
+        dest.y = this.listY.pop();
+
+        this.createLine(curr, dest);
+      } else if (this.shapeSelected[1]) {
+      } else if (this.shapeSelected[2]) {
+        const { min, max } = this.getMinAndMax();
+        this.createRectangle(min, max);
+      } else {
+      }
       this.clearCanvas(true);
       this.drawShapes();
     },
@@ -52,10 +67,7 @@ const vm = new Vue({
       this.curr = { ...pos };
 
       if (this.listX.length > 1) {
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.prev.x, this.prev.y);
-        this.ctx.lineTo(this.curr.x, this.curr.y);
-        this.ctx.stroke();
+        this.drawLine(this.prev, this.curr);
       }
       this.prev = { ...this.curr };
 
@@ -72,21 +84,39 @@ const vm = new Vue({
       for (let i = 0; i < this.shapes.length; i++) {
         const { type, coord } = this.shapes[i];
         switch (type) {
+          case "line":
+            this.drawLine(
+              { x: coord[0], y: coord[1] },
+              { x: coord[2], y: coord[3] }
+            );
+            break;
           case "rect":
             this.ctx.fillRect(...coord);
             this.ctx.stroke();
+            break;
         }
       }
     },
-    createRectangle() {
-      const maxX = Math.max(...this.listX);
-      const minX = Math.min(...this.listX);
-      const maxY = Math.max(...this.listY);
-      const minY = Math.min(...this.listY);
-      const width = maxX - minX;
-      const height = maxY - minY;
+    drawLine(curr, dest) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(curr.x, curr.y);
+      this.ctx.lineTo(dest.x, dest.y);
+      this.ctx.stroke();
+    },
+    createLine(min, max) {
+      this.shapes.push({ type: "line", coord: [min.x, min.y, max.x, max.y] });
+    },
+    createRectangle(min, max) {
+      const width = max.x - min.x;
+      const height = max.y - min.y;
 
-      this.shapes.push({ type: "rect", coord: [minX, minY, width, height] });
+      this.shapes.push({ type: "rect", coord: [min.x, min.y, width, height] });
+    },
+    getMinAndMax() {
+      return {
+        min: { x: Math.min(...this.listX), y: Math.min(...this.listY) },
+        max: { x: Math.max(...this.listX), y: Math.max(...this.listY) }
+      };
     }
   }
 });
