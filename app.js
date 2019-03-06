@@ -14,8 +14,8 @@ const vm = new Vue({
     canvas: null,
     canvasDim: { x: 0, y: 0 },
     ctx: null,
-    curr: { x: 0, y: 0 },
-    prev: { x: 0, y: 0 },
+    curr: [],
+    prev: [],
     listX: [],
     listY: [],
     shapes: [],
@@ -33,10 +33,7 @@ const vm = new Vue({
   methods: {
     onPan({ center, eventType }) {
       eventType === 2
-        ? this.draw({
-            x: center.x - this.canvasDim.x,
-            y: center.y - this.canvasDim.y
-          })
+        ? this.draw([center.x - this.canvasDim.x, center.y - this.canvasDim.y])
         : this.stopDrawing();
     },
     clearList() {
@@ -45,14 +42,8 @@ const vm = new Vue({
     },
     stopDrawing() {
       if (this.shapeSelected[0]) {
-        const curr = { x: 0, y: 0 };
-        const dest = { x: 0, y: 0 };
-
-        curr.x = this.listX.shift();
-        curr.y = this.listY.shift();
-        dest.x = this.listX.pop();
-        dest.y = this.listY.pop();
-
+        const curr = [this.listX.shift(), this.listY.shift()];
+        const dest = [this.listX.pop(), this.listY.pop()];
         this.createLine(curr, dest);
       } else if (this.shapeSelected[1]) {
       } else if (this.shapeSelected[2]) {
@@ -64,15 +55,15 @@ const vm = new Vue({
       this.drawShapes();
     },
     draw(pos) {
-      this.curr = { ...pos };
+      this.curr = [...pos];
 
       if (this.listX.length > 1) {
         this.drawLine(this.prev, this.curr);
       }
-      this.prev = { ...this.curr };
+      this.prev = [...this.curr];
 
-      this.listX.push(this.curr.x);
-      this.listY.push(this.curr.y);
+      this.listX.push(this.curr[0]);
+      this.listY.push(this.curr[1]);
     },
     clearCanvas(isRedrawing) {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -85,10 +76,7 @@ const vm = new Vue({
         const { type, coord } = this.shapes[i];
         switch (type) {
           case "line":
-            this.drawLine(
-              { x: coord[0], y: coord[1] },
-              { x: coord[2], y: coord[3] }
-            );
+            this.drawLine(coord.curr, coord.dest);
             break;
           case "rect":
             this.ctx.fillRect(...coord);
@@ -99,12 +87,15 @@ const vm = new Vue({
     },
     drawLine(curr, dest) {
       this.ctx.beginPath();
-      this.ctx.moveTo(curr.x, curr.y);
-      this.ctx.lineTo(dest.x, dest.y);
+      this.ctx.moveTo(curr[0], curr[1]);
+      this.ctx.lineTo(dest[0], dest[1]);
       this.ctx.stroke();
     },
-    createLine(min, max) {
-      this.shapes.push({ type: "line", coord: [min.x, min.y, max.x, max.y] });
+    createLine(curr, dest) {
+      this.shapes.push({
+        type: "line",
+        coord: { curr, dest }
+      });
     },
     createRectangle(min, max) {
       const width = max.x - min.x;
