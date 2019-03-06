@@ -1,4 +1,4 @@
-new Vue({
+const vm = new Vue({
   el: "#app",
   data: {
     canvas: null,
@@ -7,17 +7,19 @@ new Vue({
     y: { curr: 0, next: 0 },
     listX: [],
     listY: [],
+    state: [],
     shapeSelected: [true, false, false, false], // [ line, triangle, rectangle, circle ]
     isMouseDown: false
   },
   mounted() {
-    this.canvas = document.getElementById("canvas");
-    this.ctx = canvas.getContext("2d");
+    this.canvas = document.getElementById("drawing-board");
+    this.ctx = this.canvas.getContext("2d");
     this.ctx.lineWidth = 2;
   },
   methods: {
     stopDrawing() {
       this.isMouseDown = false;
+      this.drawRectangle();
     },
     startDrawing(e) {
       this.isMouseDown = true;
@@ -41,8 +43,8 @@ new Vue({
         this.listY.push(this.y.curr, this.y.next);
       }
     },
-    clearCanvas(x, y, w, h) {
-      this.ctx.clearRect(x, y, w, h);
+    clearCanvas() {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.listX = [];
       this.listY = [];
     },
@@ -54,7 +56,7 @@ new Vue({
       const width = maxX - minX;
       const height = maxY - minY;
 
-      this.clearCanvas(minX, minY, width, height);
+      this.clearCanvas();
       this.ctx.fillRect(minX, minY, width, height);
       this.ctx.stroke();
     }
