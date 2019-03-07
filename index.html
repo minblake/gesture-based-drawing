@@ -49,7 +49,51 @@
               Circle
             </button>
           </div>
-          <canvas id="drawing-board" width="300px" height="400px" v-pan="onPan">
+          <div class="field is-grouped">
+            <div
+              class="button color-palette"
+              :class="{ 'is-focused': colorSelected[0] }"
+              style="background: black"
+              @click="colorSelected = [true, false, false, false, false, false, false]"
+            ></div>
+            <div
+              class="button color-palette"
+              :class="{ 'is-focused': colorSelected[1] }"
+              style="background: red"
+              @click="colorSelected = [false, true, false, false, false, false, false]"
+            ></div>
+            <div
+              class="button color-palette"
+              :class="{ 'is-focused': colorSelected[2] }"
+              style="background: orange"
+              @click="colorSelected = [false, false, true, false, false, false, false]"
+            ></div>
+            <div
+              class="button color-palette"
+              :class="{ 'is-focused': colorSelected[3] }"
+              style="background: yellow"
+              @click="colorSelected = [false, false, false, true, false, false, false]"
+            ></div>
+            <div
+              class="button color-palette"
+              :class="{ 'is-focused': colorSelected[4] }"
+              style="background: green"
+              @click="colorSelected = [false, false, false, false, true, false, false]"
+            ></div>
+            <div
+              class="button color-palette"
+              :class="{ 'is-focused': colorSelected[5] }"
+              style="background: blue"
+              @click="colorSelected = [false, false, false, false, false, true, false]"
+            ></div>
+            <div
+              class="button color-palette"
+              :class="{ 'is-focused': colorSelected[6] }"
+              style="background: gray"
+              @click="colorSelected = [false, false, false, false, false, false, true]"
+            ></div>
+          </div>
+          <canvas id="drawing-board" width="330px" height="350px" v-pan="onPan">
           </canvas>
           <button
             class="clear button is-danger is-centered"
