@@ -18,8 +18,8 @@ new Vue({
     prev: [0, 0],
     history: [],
     shapes: [],
-    shapeSelected: [true, false, false, false],
-    colorSelected: [true, false, false, false, false, false, false]
+    color: "black",
+    shape: "line"
   },
   mounted() {
     this.canvas = document.getElementById("drawing-board");
@@ -36,6 +36,7 @@ new Vue({
     draw({ center }) {
       const x = center.x - this.canvasDim[0];
       const y = center.y - this.canvasDim[1];
+      this.ctx.strokeStyle = this.color;
 
       if (this.history.length < 1) this.prev = [x, y];
 
@@ -61,6 +62,7 @@ new Vue({
       this.ctx.lineTo(...p2);
       this.ctx.lineTo(...p3);
       this.ctx.lineTo(...p1);
+      this.ctx.stroke();
       this.ctx.fill();
     },
     drawRectangle({ x, y, w, h }) {
@@ -70,11 +72,13 @@ new Vue({
     drawCircle({ x, y, r }) {
       this.ctx.beginPath();
       this.ctx.arc(x, y, r, 0, 2 * Math.PI);
+      this.ctx.stroke();
       this.ctx.fill();
     },
     drawShapes() {
       for (let i = 0; i < this.shapes.length; i++) {
         const { type, color, args } = this.shapes[i];
+        this.ctx.strokeStyle = color;
         this.ctx.fillStyle = color;
         switch (type) {
           case "line":
@@ -92,19 +96,19 @@ new Vue({
         }
       }
     },
-    createLine(color) {
+    createLine() {
       const curr = this.history.shift();
       const dest = this.history.pop();
       this.shapes.push({
         type: "line",
-        color,
+        color: this.color,
         args: {
           curr: [curr.x, curr.y],
           dest: [dest.x, dest.y]
         }
       });
     },
-    createTriangle({ minX, minY, maxX, maxY }, color) {
+    createTriangle({ minX, minY, maxX, maxY }) {
       const p1 = [minX.x, minX.y];
       const p3 = [maxX.x, maxX.y];
       let p2;
@@ -120,11 +124,11 @@ new Vue({
 
       this.shapes.push({
         type: "triangle",
-        color,
+        color: this.color,
         args: { p1, p2, p3 }
       });
     },
-    createRectangle({ minX, minY, maxX, maxY }, color) {
+    createRectangle({ minX, minY, maxX, maxY }) {
       const x = minX.x;
       const y = minY.y;
       const w = maxX.x - x;
@@ -132,11 +136,11 @@ new Vue({
 
       this.shapes.push({
         type: "rectangle",
-        color,
+        color: this.color,
         args: { x, y, w, h }
       });
     },
-    createCircle({ minX, minY, maxX, maxY }, color) {
+    createCircle({ minX, minY, maxX, maxY }) {
       const radX = (maxX.x - minX.x) / 2;
       const radY = (maxY.y - minY.y) / 2;
       const r = (radX + radY) / 2;
@@ -145,29 +149,24 @@ new Vue({
 
       this.shapes.push({
         type: "circle",
-        color,
+        color: this.color,
         args: { x, y, r }
       });
     },
     stopDrawing() {
       const minMax = this.findMinMax();
-      const color = this.getCurrentColor();
-      switch (true) {
-        // line
-        case this.shapeSelected[0]:
-          this.createLine(color);
+      switch (this.shape) {
+        case "line":
+          this.createLine();
           break;
-        // triangle
-        case this.shapeSelected[1]:
-          this.createTriangle(minMax, color);
+        case "triangle":
+          this.createTriangle(minMax);
           break;
-        // rectangle
-        case this.shapeSelected[2]:
-          this.createRectangle(minMax, color);
+        case "rectangle":
+          this.createRectangle(minMax);
           break;
-        // circle
-        case this.shapeSelected[3]:
-          this.createCircle(minMax, color);
+        case "circle":
+          this.createCircle(minMax);
           break;
       }
       this.redraw();
@@ -192,33 +191,6 @@ new Vue({
       let maxY = coords[yList.indexOf(Math.max(...yList))];
 
       return { minX, minY, maxX, maxY };
-    },
-    getCurrentColor() {
-      let color = "";
-      switch (true) {
-        case this.colorSelected[0]:
-          color = "black";
-          break;
-        case this.colorSelected[1]:
-          color = "red";
-          break;
-        case this.colorSelected[2]:
-          color = "orange";
-          break;
-        case this.colorSelected[3]:
-          color = "yellow";
-          break;
-        case this.colorSelected[4]:
-          color = "green";
-          break;
-        case this.colorSelected[5]:
-          color = "blue";
-          break;
-        case this.colorSelected[6]:
-          color = "gray";
-          break;
-      }
-      return color;
     }
   }
 });

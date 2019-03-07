@@ -18,29 +18,29 @@
           <div class="field is-grouped shapes">
             <a
               class="image is-48x48"
-              :class="{ 'is-selected': shapeSelected[0] }"
-              @click="shapeSelected = [true, false, false, false]"
+              :class="{ 'is-selected': shape === 'line' }"
+              @click="shape = 'line'"
             >
               <img src="./assets/icons8-line-48.png" alt="line" />
             </a>
             <a
               class="image is-48x48"
-              :class="{ 'is-selected': shapeSelected[1] }"
-              @click="shapeSelected = [false, true, false, false]"
+              :class="{ 'is-selected': shape === 'triangle' }"
+              @click="shape = 'triangle'"
             >
               <img src="./assets/icons8-triangle-48.png" alt="triangle" />
             </a>
             <a
               class="image is-48x48"
-              :class="{ 'is-selected': shapeSelected[2] }"
-              @click="shapeSelected = [false, false, true, false]"
+              :class="{ 'is-selected': shape === 'rectangle' }"
+              @click="shape = 'rectangle'"
             >
               <img src="./assets/icons8-rectangular-48.png" alt="rectangle" />
             </a>
             <a
               class="image is-48x48"
-              :class="{ 'is-selected': shapeSelected[3] }"
-              @click="shapeSelected = [false, false, false, true]"
+              :class="{ 'is-selected': shape === 'circle' }"
+              @click="shape = 'circle'"
             >
               <img src="./assets/icons8-circle-48.png" alt="circle" />
             </a>
@@ -48,45 +48,45 @@
           <div class="field is-grouped">
             <div
               class="color"
-              :class="{ 'is-selected': colorSelected[0] }"
+              :class="{ 'is-selected': color === 'black' }"
               style="background: black"
-              @click="colorSelected = [true, false, false, false, false, false, false]"
+              @click="color = 'black'"
             ></div>
             <div
               class="color"
-              :class="{ 'is-selected': colorSelected[1] }"
+              :class="{ 'is-selected': color === 'red' }"
               style="background: red"
-              @click="colorSelected = [false, true, false, false, false, false, false]"
+              @click="color = 'red'"
             ></div>
             <div
               class="color"
-              :class="{ 'is-selected': colorSelected[2] }"
+              :class="{ 'is-selected': color === 'orange' }"
               style="background: orange"
-              @click="colorSelected = [false, false, true, false, false, false, false]"
+              @click="color = 'orange'"
             ></div>
             <div
               class="color"
-              :class="{ 'is-selected': colorSelected[3] }"
+              :class="{ 'is-selected': color === 'yellow' }"
               style="background: yellow"
-              @click="colorSelected = [false, false, false, true, false, false, false]"
+              @click="color = 'yellow'"
             ></div>
             <div
               class="color"
-              :class="{ 'is-selected': colorSelected[4] }"
+              :class="{ 'is-selected': color === 'green' }"
               style="background: green"
-              @click="colorSelected = [false, false, false, false, true, false, false]"
+              @click="color = 'green'"
             ></div>
             <div
               class="color"
-              :class="{ 'is-selected': colorSelected[5] }"
+              :class="{ 'is-selected': color === 'blue' }"
               style="background: blue"
-              @click="colorSelected = [false, false, false, false, false, true, false]"
+              @click="color = 'blue'"
             ></div>
             <div
               class="color"
-              :class="{ 'is-selected': colorSelected[6] }"
+              :class="{ 'is-selected': color === 'gray' }"
               style="background: gray"
-              @click="colorSelected = [false, false, false, false, false, false, true]"
+              @click="color = 'gray'"
             ></div>
           </div>
           <canvas id="drawing-board" width="330px" height="350px" v-pan="onPan">
