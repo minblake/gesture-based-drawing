@@ -15,80 +15,76 @@
     <section class="hero is-light is-fullheight">
       <div class="hero-body">
         <div id="app">
-          <div class="buttons has-addons is-centered">
-            <button
-              class="button"
-              type="button"
-              :class="{ 'is-primary': shapeSelected[0] }"
+          <div class="field is-grouped shapes">
+            <a
+              class="image is-48x48"
+              :class="{ 'is-selected': shapeSelected[0] }"
               @click="shapeSelected = [true, false, false, false]"
             >
-              Line
-            </button>
-            <button
-              class="button"
-              :class="{ 'is-primary': shapeSelected[1] }"
-              type="button"
+              <img src="./assets/icons8-line-48.png" alt="line" />
+            </a>
+            <a
+              class="image is-48x48"
+              :class="{ 'is-selected': shapeSelected[1] }"
               @click="shapeSelected = [false, true, false, false]"
             >
-              Triangle
-            </button>
-            <button
-              class="button"
-              :class="{ 'is-primary': shapeSelected[2] }"
-              type="button"
+              <img src="./assets/icons8-triangle-48.png" alt="triangle" />
+            </a>
+            <a
+              class="image is-48x48"
+              :class="{ 'is-selected': shapeSelected[2] }"
               @click="shapeSelected = [false, false, true, false]"
             >
-              Rectangle
-            </button>
-            <button
-              class="button"
-              :class="{ 'is-primary': shapeSelected[3] }"
-              type="button"
+              <img src="./assets/icons8-rectangular-48.png" alt="rectangle" />
+            </a>
+            <a
+              class="image is-48x48"
+              :class="{ 'is-selected': shapeSelected[3] }"
               @click="shapeSelected = [false, false, false, true]"
             >
-              Circle
-            </button>
+              <img src="./assets/icons8-circle-48.png" alt="circle" />
+            </a>
           </div>
           <div class="field is-grouped">
             <div
-              class="button color-palette"
-              :class="{ 'is-focused': colorSelected[0] }"
+              class="color"
+              :class="{ 'is-selected': colorSelected[0] }"
               style="background: black"
               @click="colorSelected = [true, false, false, false, false, false, false]"
             ></div>
             <div
-              class="button color-palette"
-              :class="{ 'is-focused': colorSelected[1] }"
+              class="color"
+              :class="{ 'is-selected': colorSelected[1] }"
               style="background: red"
               @click="colorSelected = [false, true, false, false, false, false, false]"
             ></div>
             <div
-              class="button color-palette"
-              :class="{ 'is-focused': colorSelected[2] }"
+              class="color"
+              :class="{ 'is-selected': colorSelected[2] }"
               style="background: orange"
               @click="colorSelected = [false, false, true, false, false, false, false]"
             ></div>
             <div
-              class="button color-palette"
-              :class="{ 'is-focused': colorSelected[3] }"
+              class="color"
+              :class="{ 'is-selected': colorSelected[3] }"
               style="background: yellow"
               @click="colorSelected = [false, false, false, true, false, false, false]"
             ></div>
             <div
-              class="button color-palette"
-              :class="{ 'is-focused': colorSelected[4] }"
+              class="color"
+              :class="{ 'is-selected': colorSelected[4] }"
               style="background: green"
               @click="colorSelected = [false, false, false, false, true, false, false]"
             ></div>
             <div
-              class="button color-palette"
-              :class="{ 'is-focused': colorSelected[5] }"
+              class="color"
+              :class="{ 'is-selected': colorSelected[5] }"
               style="background: blue"
               @click="colorSelected = [false, false, false, false, false, true, false]"
             ></div>
             <div
-              class="button color-palette"
-              :class="{ 'is-focused': colorSelected[6] }"
+              class="color"
+              :class="{ 'is-selected': colorSelected[6] }"
               style="background: gray"
               @click="colorSelected = [false, false, false, false, false, false, true]"
             ></div>
