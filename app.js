@@ -8,18 +8,18 @@ Vue.directive("pan", {
   }
 });
 
-const vm = new Vue({
+new Vue({
   el: "#app",
   data: {
     canvas: null,
-    canvasDim: { x: 0, y: 0 },
     ctx: null,
-    curr: [],
-    prev: [],
-    listX: [],
-    listY: [],
+    canvasDim: [0, 0],
+    curr: [0, 0],
+    prev: [0, 0],
+    history: [],
     shapes: [],
-    shapeSelected: [true, false, false, false] // [ line, triangle, rectangle, circle ]
+    dirCount: [0, 0, 0, 0],
+    shapeSelected: [true, false, false, false]
   },
   mounted() {
     this.canvas = document.getElementById("drawing-board");
@@ -27,87 +27,147 @@ const vm = new Vue({
     this.ctx.lineWidth = 2;
 
     const rect = this.canvas.getBoundingClientRect();
-    this.canvasDim.x = rect.left;
-    this.canvasDim.y = rect.top;
+    this.canvasDim = [rect.left, rect.top];
   },
   methods: {
-    onPan({ center, eventType }) {
-      eventType === 2
-        ? this.draw([center.x - this.canvasDim.x, center.y - this.canvasDim.y])
-        : this.stopDrawing();
+    onPan(e) {
+      e.eventType === 2 ? this.draw(e) : this.stopDrawing();
     },
-    clearList() {
-      this.listX = [];
-      this.listY = [];
-    },
-    stopDrawing() {
-      if (this.shapeSelected[0]) {
-        const curr = [this.listX.shift(), this.listY.shift()];
-        const dest = [this.listX.pop(), this.listY.pop()];
-        this.createLine(curr, dest);
-      } else if (this.shapeSelected[1]) {
-      } else if (this.shapeSelected[2]) {
-        const { min, max } = this.getMinAndMax();
-        this.createRectangle(min, max);
-      } else {
-      }
-      this.clearCanvas(true);
-      this.drawShapes();
-    },
-    draw(pos) {
-      this.curr = [...pos];
+    draw({ center }) {
+      const x = center.x - this.canvasDim[0];
+      const y = center.y - this.canvasDim[1];
 
-      if (this.listX.length > 1) {
-        this.drawLine(this.prev, this.curr);
-      }
-      this.prev = [...this.curr];
+      if (this.history.length < 1) this.prev = [x, y];
+      this.curr = [x, y];
 
-      this.listX.push(this.curr[0]);
-      this.listY.push(this.curr[1]);
+      this.drawLine({
+        curr: [...this.prev],
+        dest: [...this.curr]
+      });
+      this.prev = [x, y];
+
+      this.history.push({ x, y });
     },
-    clearCanvas(isRedrawing) {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.clearList();
-
-      if (!isRedrawing) this.shapes = [];
+    drawLine({ curr, dest }) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(...curr);
+      this.ctx.lineTo(...dest);
+      this.ctx.closePath();
+      this.ctx.stroke();
+    },
+    drawTriangle({ p1, p2, p3 }) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(...p1);
+      this.ctx.lineTo(...p2);
+      this.ctx.lineTo(...p3);
+      this.ctx.lineTo(...p1);
+      this.ctx.stroke();
+      this.ctx.fill();
+    },
+    drawRectangle({ x, y, w, h }) {
+      this.ctx.fillRect(x, y, w, h);
+      this.ctx.stroke();
     },
     drawShapes() {
       for (let i = 0; i < this.shapes.length; i++) {
-        const { type, coord } = this.shapes[i];
+        const { type, args } = this.shapes[i];
         switch (type) {
           case "line":
-            this.drawLine(coord.curr, coord.dest);
+            this.drawLine(args);
             break;
-          case "rect":
-            this.ctx.fillRect(...coord);
-            this.ctx.stroke();
+          case "triangle":
+            this.drawTriangle(args);
+            break;
+          case "rectangle":
+            this.drawRectangle(args);
+            break;
+          case "circle":
             break;
         }
       }
     },
-    drawLine(curr, dest) {
-      this.ctx.beginPath();
-      this.ctx.moveTo(curr[0], curr[1]);
-      this.ctx.lineTo(dest[0], dest[1]);
-      this.ctx.stroke();
-    },
-    createLine(curr, dest) {
+    createLine() {
+      const curr = this.history.shift();
+      const dest = this.history.pop();
       this.shapes.push({
         type: "line",
-        coord: { curr, dest }
+        args: {
+          curr: [curr.x, curr.y],
+          dest: [dest.x, dest.y]
+        }
       });
     },
-    createRectangle(min, max) {
-      const width = max.x - min.x;
-      const height = max.y - min.y;
+    createTriangle({ minX, minY, maxX, maxY }) {
+      const p1 = [minX.x, minX.y];
+      const p3 = [maxX.x, maxX.y];
+      let p2;
 
-      this.shapes.push({ type: "rect", coord: [min.x, min.y, width, height] });
+      if (
+        Math.abs(minY.y - maxX.y) > Math.abs(maxY.y - maxX.y) &&
+        Math.abs(minY.y - minX.y) > Math.abs(maxY.y - maxX.y)
+      ) {
+        p2 = [minY.x, minY.y];
+      } else {
+        p2 = [maxY.x, maxY.y];
+      }
+
+      this.shapes.push({
+        type: "triangle",
+        args: { p1, p2, p3 }
+      });
     },
-    getMinAndMax() {
-      return {
-        min: { x: Math.min(...this.listX), y: Math.min(...this.listY) },
-        max: { x: Math.max(...this.listX), y: Math.max(...this.listY) }
-      };
+    createRectangle({ minX, minY, maxX, maxY }) {
+      const x = minX.x;
+      const y = minY.y;
+      const w = maxX.x - x;
+      const h = maxY.y - y;
+
+      this.shapes.push({
+        type: "rectangle",
+        args: { x, y, w, h }
+      });
+    },
+    stopDrawing() {
+      const minMax = this.findMinMax();
+      switch (true) {
+        // line
+        case this.shapeSelected[0]:
+          this.createLine();
+          break;
+        // triangle
+        case this.shapeSelected[1]:
+          this.createTriangle(minMax);
+          break;
+        // rectangle
+        case this.shapeSelected[2]:
+          this.createRectangle(minMax);
+          break;
+        // circle
+        case this.shapeSelected[3]:
+          break;
+      }
+      this.redraw();
+      this.drawShapes();
+    },
+    redraw() {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.history = [];
+    },
+    clearCanvas() {
+      this.redraw();
+      this.shapes = [];
+    },
+    findMinMax() {
+      const coords = this.history;
+      const xList = coords.map(c => c.x);
+      const yList = coords.map(c => c.y);
+
+      let minX = coords[xList.indexOf(Math.min(...xList))];
+      let maxX = coords[xList.indexOf(Math.max(...xList))];
+      let minY = coords[yList.indexOf(Math.min(...yList))];
+      let maxY = coords[yList.indexOf(Math.max(...yList))];
+
+      return { minX, minY, maxX, maxY };
     }
   }
 });
