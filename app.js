@@ -52,7 +52,6 @@ new Vue({
       this.ctx.beginPath();
       this.ctx.moveTo(...curr);
       this.ctx.lineTo(...dest);
-      this.ctx.closePath();
       this.ctx.stroke();
     },
     drawTriangle({ p1, p2, p3 }) {
@@ -64,9 +63,14 @@ new Vue({
       this.ctx.stroke();
       this.ctx.fill();
     },
-    drawRectangle({ x, y, w, h }) {
-      this.ctx.fillRect(x, y, w, h);
+    drawRectangle(args) {
+      this.ctx.fillRect(...args);
       this.ctx.stroke();
+    },
+    drawCircle({ x, y, r }) {
+      this.ctx.beginPath();
+      this.ctx.arc(x, y, r, 0, 2 * Math.PI);
+      this.ctx.fill();
     },
     drawShapes() {
       for (let i = 0; i < this.shapes.length; i++) {
@@ -82,6 +86,7 @@ new Vue({
             this.drawRectangle(args);
             break;
           case "circle":
+            this.drawCircle(args);
             break;
         }
       }
@@ -127,6 +132,18 @@ new Vue({
         args: { x, y, w, h }
       });
     },
+    createCircle({ minX, minY, maxX, maxY }) {
+      const radX = (maxX.x - minX.x) / 2;
+      const radY = (maxY.y - minY.y) / 2;
+      const r = (radX + radY) / 2;
+      const x = minX.x + radX;
+      const y = minY.y + radY;
+
+      this.shapes.push({
+        type: "circle",
+        args: { x, y, r }
+      });
+    },
     stopDrawing() {
       const minMax = this.findMinMax();
       switch (true) {
@@ -144,6 +161,7 @@ new Vue({
           break;
         // circle
         case this.shapeSelected[3]:
+          this.createCircle(minMax);
           break;
       }
       this.redraw();
