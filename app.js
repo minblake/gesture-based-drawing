@@ -54,6 +54,7 @@ new Vue({
       this.ctx.beginPath();
       this.ctx.moveTo(...curr);
       this.ctx.lineTo(...dest);
+      this.ctx.closePath();
       this.ctx.stroke();
     },
     drawTriangle({ p1, p2, p3 }) {
@@ -62,16 +63,24 @@ new Vue({
       this.ctx.lineTo(...p2);
       this.ctx.lineTo(...p3);
       this.ctx.lineTo(...p1);
+      this.ctx.closePath();
       this.ctx.stroke();
       this.ctx.fill();
     },
-    drawRectangle({ x, y, w, h }) {
-      this.ctx.fillRect(x, y, w, h);
+    drawRectangle({ lt, rt, lb, rb }) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(...lt);
+      this.ctx.lineTo(...rt);
+      this.ctx.lineTo(...rb);
+      this.ctx.lineTo(...lb);
+      this.ctx.lineTo(...lt);
+      this.ctx.fill();
       this.ctx.stroke();
     },
     drawCircle({ x, y, r }) {
       this.ctx.beginPath();
       this.ctx.arc(x, y, r, 0, 2 * Math.PI);
+      this.ctx.closePath();
       this.ctx.stroke();
       this.ctx.fill();
     },
@@ -129,15 +138,17 @@ new Vue({
       });
     },
     createRectangle({ minX, minY, maxX, maxY }) {
-      const x = minX.x;
-      const y = minY.y;
-      const w = maxX.x - x;
-      const h = maxY.y - y;
+      const w = maxX.x - minX.x;
+      const h = maxY.y - minY.y;
+      const lt = [minX.x, minY.y];
+      const rt = [minX.x + w, minY.y];
+      const lb = [minX.x, maxY.y];
+      const rb = [minX.x + w, maxY.y];
 
       this.shapes.push({
         type: "rectangle",
         color: this.color,
-        args: { x, y, w, h }
+        args: { lt, rt, lb, rb }
       });
     },
     createCircle({ minX, minY, maxX, maxY }) {
